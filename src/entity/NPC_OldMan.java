@@ -35,6 +35,7 @@ public class NPC_OldMan extends Entity{
     }
 
     public void setAction() {
+
         actionLockCounter++;
 
         if (actionLockCounter == 120) {
