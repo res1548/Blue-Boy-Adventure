@@ -8,11 +8,18 @@ public class Sound {
     Clip clip;
     URL soundURL[] = new URL[30];
     public Sound() {
+
         soundURL[0] = getClass().getResource("/sound/BlueBoyAdventure.wav");
         soundURL[1] = getClass().getResource("/sound/coin.wav");
         soundURL[2] = getClass().getResource("/sound/powerup.wav");
         soundURL[3] = getClass().getResource("/sound/unlock.wav");
         soundURL[4] = getClass().getResource("/sound/fanfare.wav");
+        soundURL[5] = getClass().getResource("/sound/hitmonster.wav");
+        soundURL[6] = getClass().getResource("/sound/receivedamage.wav");
+        soundURL[7] = getClass().getResource("/sound/swingweapon.wav");
+        soundURL[8] = getClass().getResource("/sound/levelup.wav");
+        soundURL[9] = getClass().getResource("/sound/cursor.wav");
+
     }
     public void setFile(int i) {
         try {
