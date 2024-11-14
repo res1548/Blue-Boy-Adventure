@@ -42,7 +42,6 @@ public class IT_DryTree extends InteractiveTile{
     }
 
     public Color getParticleColor() {
-
         Color color = new Color(65, 50, 30);
         return color;
     }

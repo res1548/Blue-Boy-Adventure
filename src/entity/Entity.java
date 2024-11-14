@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Entity {
 
@@ -62,6 +63,8 @@ public class Entity {
     public Projectile projectile;
 
     // ITEM ATTRIBUTES
+    public ArrayList<Entity> inventory = new ArrayList<>();
+    public final int maxInventorySize = 20;
     public int value;
     public int attackValue;
     public int defenceValue;
@@ -88,13 +91,11 @@ public class Entity {
     public void damageReaction() {}
 
     public void speak() {
-
         if (dialogues[dialoguesIndex] == null) {
             dialoguesIndex = 0;
         }
         gp.ui.currentDialogue = dialogues[dialoguesIndex];
         dialoguesIndex++;
-
         switch (gp.player.direction) {
 
             case "up":
@@ -111,7 +112,6 @@ public class Entity {
                 break;
 
         }
-
     }
 
     public void use(Entity entity) {
@@ -122,12 +122,12 @@ public class Entity {
 
     public void dropItem(Entity droppedItem) {
 
-        for (int i = 0; i < gp.obj.length; i++) {
+        for (int i = 0; i < gp.obj[1].length; i++) {
 
-            if (gp.obj[i] == null) {
-                gp.obj[i] = droppedItem;
-                gp.obj[i].worldX = worldX;
-                gp.obj[i].worldY = worldY;
+            if (gp.obj[gp.currentMap][i] == null) {
+                gp.obj[gp.currentMap][i] = droppedItem;
+                gp.obj[gp.currentMap][i].worldX = worldX;
+                gp.obj[gp.currentMap][i].worldY = worldY;
                 break;
             }
         }
@@ -215,7 +215,7 @@ public class Entity {
             }
         }
         spriteCounter++;
-        if (spriteCounter > 12) {
+        if (spriteCounter > 24) {
             if (spriteNum == 1) {
                 spriteNum = 2;
             } else if (spriteNum == 2) {
