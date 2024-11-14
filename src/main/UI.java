@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class UI {
-
     GamePanel gp;
     Graphics2D g2;
     Font maruMonica, purisaB;
@@ -27,16 +26,13 @@ public class UI {
     int subState = 0;
 
     public UI(GamePanel gp) {
-
         this.gp = gp;
 
         try {
-
             InputStream is = getClass().getResourceAsStream("/font/x12y16pxMaruMonica.ttf");
             maruMonica = Font.createFont(Font.TRUETYPE_FONT, is);
             is = getClass().getResourceAsStream("/font/Purisa Bold.ttf");
             purisaB = Font.createFont(Font.TRUETYPE_FONT, is);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (FontFormatException e) {
@@ -54,14 +50,11 @@ public class UI {
     }
 
     public void addMessage(String text) {
-
         message.add(text);
         messageCounter.add(0);
-
     }
 
     public void draw(Graphics2D g2) {
-
         this.g2 = g2;
         g2.setFont(maruMonica);
         g2.setColor(Color.white);
@@ -70,38 +63,75 @@ public class UI {
         if (gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
-
         // PLAY STATE
         if (gp.gameState == gp.playState) {
             drawPlayerLife();
             drawMessage();
         }
-
         // PAUSE STATE
         if (gp.gameState == gp.pauseState) {
             drawPlayerLife();
             drawPauseScreen();
         }
-
         // DIALOGUE STATE
         if (gp.gameState == gp.dialogueState) {
             drawDialogueScreen();
         }
-
         // CHARACTER STATE
         if (gp.gameState == gp.characterState) {
             drawCharacterScreen();
             drawInventory();
         }
-
         // OPTIONS STATE
         if (gp.gameState == gp.optionsState) {
             drawOptionsScreen();
         }
+        if (gp.gameState == gp.gameOverState) {
+            drawGameOverScreen();
+        }
+    }
+
+    public void drawGameOverScreen() {
+
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        int x;
+        int y;
+        String text;
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 110f));
+
+        text = "Game Over";
+        // Shadow
+        g2.setColor(Color.black);
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 4;
+        g2.drawString(text, x, y);
+        // Main
+        g2.setColor(Color.white);
+        g2.drawString(text, x - 4, y - 4);
+
+        // Retry
+        g2.setFont(g2.getFont().deriveFont(50f));
+        text = "Retry";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 4;
+        g2.drawString(text, x, y);
+        if (commandNum == 0) {
+            g2.drawString(">", x - 40, y);
+        }
+
+        // Back to the title screen
+        text = "Quit";
+        x = getXforCenteredText(text);
+        y += 55;
+        g2.drawString(text, x, y);
+        if (commandNum == 1) {
+            g2.drawString(">", x - 40, y);
+        }
     }
 
     public void drawOptionsScreen() {
-
         g2.setColor(Color.white);
         g2.setFont(g2.getFont().deriveFont(32F));
 
@@ -126,12 +156,10 @@ public class UI {
                 options_endGameConfirmation(frameX, frameY);
                 break;
         }
-
         gp.keyH.enterPressed = false;
     }
 
     public void options_top(int frameX, int frameY) {
-
         int textX;
         int textY;
 
@@ -225,10 +253,11 @@ public class UI {
         g2.drawRect(textX, textY, 120, 24);
         volumeWidth = 24 * gp.se.volumeScale;
         g2.fillRect(textX, textY, volumeWidth, 24);
+
+        gp.config.saveConfig();
     }
 
     public void options_fullScreenNotification(int frameX, int frameY) {
-
         int textX = frameX + gp.tileSize;
         int textY = frameY + gp.tileSize * 3;
 
@@ -342,7 +371,6 @@ public class UI {
     }
 
     public void drawInventory() {
-
         // FRAME
         int frameX = gp.tileSize * 12;
         int frameY = gp.tileSize;
@@ -425,7 +453,6 @@ public class UI {
     }
 
     public void drawMessage() {
-
         int messageX = gp.tileSize;
         int messageY = gp.tileSize * 4;
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
@@ -448,11 +475,8 @@ public class UI {
                     message.remove(i);
                     messageCounter.remove(i);
                 }
-
             }
-
         }
-
     }
 
     public void drawCharacterScreen() {
@@ -562,7 +586,6 @@ public class UI {
     }
 
     public void drawPlayerLife() {
-
         int x = gp.tileSize / 2;
         int y = gp.tileSize / 2;
         int i = 0;
