@@ -1,7 +1,10 @@
 package main;
 
+import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
+import environment.EnvironmentManager;
+import tile.Map;
 import tile.TileManager;
 import tiles_interactive.InteractiveTile;
 
@@ -41,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable{
     int FPS = 60;
 
     // SYSTEM
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
     public KeyHandler keyH = new KeyHandler(this);
     Sound music = new Sound();
     Sound se = new Sound();
@@ -50,6 +53,9 @@ public class GamePanel extends JPanel implements Runnable{
     public UI ui = new UI(this);
     public EventHandler eHandler = new EventHandler(this);
     Config config = new Config(this);
+    public PathFinder pFinder = new PathFinder(this);
+    EnvironmentManager eManager = new EnvironmentManager(this);
+    Map map = new Map(this);
     Thread gameThread;
 
     // ENTITY AND OBJECT
@@ -58,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable{
     public Entity npc[][] = new Entity[maxMap][10];
     public Entity monster[][] = new Entity[maxMap][20];
     public InteractiveTile iTile[][] = new InteractiveTile[maxMap][50];
+    public Entity projectile[][] = new Entity[maxMap][20];
     ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
     public ArrayList<Entity> particleList = new ArrayList<>();
@@ -73,6 +80,8 @@ public class GamePanel extends JPanel implements Runnable{
     public final int gameOverState = 6;
     public final int transitionState = 7;
     public final int tradeState = 8;
+    public final int sleepState = 9;
+    public final int mapState = 10;
 
     public GamePanel() {
 
@@ -90,13 +99,15 @@ public class GamePanel extends JPanel implements Runnable{
         aSetter.setNPC();
         aSetter.setMonster();
         aSetter.setInteractiveTile();
-        playMusic(0);
+//        playMusic(0);
+        eManager.setup();
+
         gameState = titleState;
 
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
 
-        if (fullScreenOn == true) {
+        if (fullScreenOn) {
             setFullScreen();
         }
     }
@@ -137,10 +148,8 @@ public class GamePanel extends JPanel implements Runnable{
      */
 
     public void startGameThread() {
-
         gameThread = new Thread(this);
         gameThread.start();
-
     }
 
     public void run() {
@@ -208,13 +217,13 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            for (int i = 0; i < projectileList.size(); i++) {
-                if (projectileList.get(i) != null) {
-                    if (projectileList.get(i).alive == true) {
-                        projectileList.get(i).update();
+            for (int i = 0; i < projectile[1].length; i++) {
+                if (projectile[currentMap][i] != null) {
+                    if (projectile[currentMap][i].alive) {
+                        projectile[currentMap][i].update();
                     }
-                    if (projectileList.get(i).alive == false) {
-                        projectileList.remove(i);
+                    if (!projectile[currentMap][i].alive) {
+                        projectile[currentMap][i] = null;
                     }
                 }
             }
@@ -235,6 +244,8 @@ public class GamePanel extends JPanel implements Runnable{
                     iTile[currentMap][i].update();
                 }
             }
+
+            eManager.update();
         }
 
         if (gameState == pauseState) {
@@ -246,13 +257,18 @@ public class GamePanel extends JPanel implements Runnable{
 
         // DEBUG
         long drawStart = 0;
-        if (keyH.showDebugText == true) {
+        if (keyH.showDebugText) {
             drawStart = System.nanoTime();
         }
 
         // TITLE SCREEN
         if (gameState == titleState) {
             ui.draw(g2);
+        }
+
+        // MAP SCREEN
+        else if (gameState == mapState) {
+            map.drawFullMapScreen(g2);
         }
 
         // OTHERS
@@ -287,9 +303,9 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            for (int i = 0; i < projectileList.size(); i++) {
-                if (projectileList.get(i) != null) {
-                    entityList.add(projectileList.get(i));
+            for (int i = 0; i < projectile[1].length; i++) {
+                if (projectile[currentMap][i] != null) {
+                    entityList.add(projectile[currentMap][i]);
                 }
             }
 
@@ -318,6 +334,14 @@ public class GamePanel extends JPanel implements Runnable{
             // PLAYER
 //            player.draw(g2);
             // UI
+
+            // ENVIRONMENT
+            eManager.draw(g2);
+
+            // MINI MAP
+            map.drawMiniMap(g2);
+
+            // UI
             ui.draw(g2);
 
         }
@@ -332,7 +356,7 @@ public class GamePanel extends JPanel implements Runnable{
 //        }
 
         // DEBUG
-        if (keyH.showDebugText == true) {
+        if (keyH.showDebugText) {
             long drawEnd = System.nanoTime();
             long passed = drawEnd - drawStart;
 

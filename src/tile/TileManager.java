@@ -14,15 +14,19 @@ public class TileManager {
     GamePanel gp;
     public Tile[] tile;
     public int mapTileNum[][][];
+    boolean drawPath = true;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
+
         tile = new Tile[50];
         mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
+
         getTileImage();
         loadMap("/maps/worldV3.txt", 0);
         loadMap("/maps/interior01.txt", 1);
     }
+
     public void getTileImage() {
         // PLACEHOLDER
             setup(0, "grass00", false);
@@ -72,6 +76,7 @@ public class TileManager {
             setup(43, "floor01", false);
             setup(44, "table01", true);
     }
+
     public void setup(int index, String imageName, boolean collision) {
         UtilityTool uTool = new UtilityTool();
         try {
@@ -83,6 +88,7 @@ public class TileManager {
             throw new RuntimeException(e);
         }
     }
+
     public void loadMap(String filePath, int map) {
         try {
             InputStream is = getClass().getResourceAsStream(filePath);
@@ -107,11 +113,13 @@ public class TileManager {
 
         }
     }
+
     public void draw(Graphics2D g2) {
         int worldCol = 0;
         int worldRow = 0;
         while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
             int tileNum = mapTileNum[gp.currentMap][worldCol][worldRow];
+
             int worldX = worldCol * gp.tileSize;
             int worldY = worldRow * gp.tileSize;
             double screenX = worldX - gp.player.worldX + gp.player.screenX;
@@ -158,6 +166,20 @@ public class TileManager {
             if (worldCol == gp.maxWorldCol) {
                 worldCol = 0;
                 worldRow++;
+            }
+        }
+
+        if (drawPath) {
+            g2.setColor(new Color(255, 0, 0, 70));
+
+            for (int i = 0; i < gp.pFinder.pathList.size(); i++) {
+
+                int worldX = gp.pFinder.pathList.get(i).col * gp.tileSize;
+                int worldY = gp.pFinder.pathList.get(i).row * gp.tileSize;
+                double screenX = worldX - gp.player.worldX + gp.player.screenX;
+                double screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+                g2.fillRect((int)screenX, (int)screenY, gp.tileSize, gp.tileSize);
             }
         }
     }

@@ -54,13 +54,13 @@ public class EventHandler {
         }
 
         if (canTouchEvent == true) {
-            if (hit(0, 27, 16, "right")) {
-                damagePit(gp.dialogueState);
-            }
-            else if (hit(0, 23, 19, "any")) {
-                damagePit(gp.dialogueState);
-            }
-            else if (hit(0, 23, 12, "up")) {
+//            if (hit(0, 27, 16, "right")) {
+//                damagePit(gp.dialogueState);
+//            }
+//            else if (hit(0, 23, 19, "any")) {
+//                damagePit(gp.dialogueState);
+//            }
+            if (hit(0, 23, 12, "up")) {
                 healingPool(23, 12, gp.dialogueState);
             }
             else if (hit(0, 10, 39, "any")) {

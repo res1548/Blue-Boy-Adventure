@@ -33,13 +33,9 @@ public class InteractiveTile extends Entity {
         if (invincible == true) {
             invincibleCounter++;
 
-            if (invincible == true) {
-                invincibleCounter++;
-
-                if (invincibleCounter > 20) {
-                    invincible = false;
-                    invincibleCounter = 0;
-                }
+            if (invincibleCounter > 20) {
+                invincible = false;
+                invincibleCounter = 0;
             }
         }
     }

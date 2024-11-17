@@ -8,11 +8,14 @@ import java.io.IOException;
 
 public class OBJ_Door extends Entity {
 
-    public OBJ_Door(GamePanel gp) {
+    GamePanel gp;
 
+    public OBJ_Door(GamePanel gp) {
         super(gp);
+        this.gp = gp;
 
         name = "Door";
+        type = type_obstacle;
         down1 = setup("/objects/door", gp.tileSize, gp.tileSize);
         collision = true;
 
@@ -22,5 +25,11 @@ public class OBJ_Door extends Entity {
         solidArea.height = 32;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
+    }
+
+    public void interact() {
+
+        gp.gameState = gp.dialogueState;
+        gp.ui.currentDialogue = "You need a key to open this.";
     }
 }
