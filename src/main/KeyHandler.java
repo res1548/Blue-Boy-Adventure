@@ -3,7 +3,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, shotKeyPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, shotKeyPressed,
+    spacePressed;
     boolean checkDrawTime = false;
     boolean showDebugText = false;
     GamePanel gp;
@@ -193,12 +194,14 @@ public class KeyHandler implements KeyListener {
 
             if (code == KeyEvent.VK_ENTER) {
                 if (gp.ui.commandNum == 0) {
-//                    gp.gameState = gp.playState;
-//                    gp.playMusic(0);
+                    gp.gameState = gp.playState;
+                    gp.playMusic(0);
                     gp.ui.titleScreenState = 1;
                 }
                 if (gp.ui.commandNum == 1) {
-
+                    gp.saveLoad.load();
+                    gp.gameState = gp.playState;
+                    gp.playMusic(0);
                 }
                 if (gp.ui.commandNum == 2) {
                     System.exit(0);
@@ -295,6 +298,10 @@ public class KeyHandler implements KeyListener {
                 else {
                     gp.map.miniMapOn = false;
                 }
+            }
+
+            if (code == KeyEvent.VK_SPACE) {
+                spacePressed = true;
             }
 
             // DEBUG
@@ -439,12 +446,12 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ENTER) {
             if (gp.ui.commandNum == 0) {
                 gp.gameState = gp.playState;
-                gp.retry();
+                gp.resetGame(false);
                 gp.playMusic(0);
             }
             if (gp.ui.commandNum == 1) {
                 gp.gameState = gp.titleState;
-                gp.restart();
+                gp.resetGame(true);
             }
         }
     }
@@ -479,6 +486,14 @@ public class KeyHandler implements KeyListener {
 
         if (code == KeyEvent.VK_F) {
             shotKeyPressed = false;
+        }
+
+        if (code == KeyEvent.VK_ENTER) {
+            enterPressed = false;
+        }
+
+        if (code == KeyEvent.VK_SPACE) {
+            spacePressed = false;
         }
     }
 }

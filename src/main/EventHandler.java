@@ -53,7 +53,7 @@ public class EventHandler {
             canTouchEvent = true;
         }
 
-        if (canTouchEvent == true) {
+        if (canTouchEvent) {
 //            if (hit(0, 27, 16, "right")) {
 //                damagePit(gp.dialogueState);
 //            }
@@ -76,7 +76,7 @@ public class EventHandler {
     }
 
     public void speak(Entity entity) {
-        if (gp.keyH.enterPressed == true) {
+        if (gp.keyH.enterPressed) {
             gp.gameState = gp.dialogueState;
             gp.player.attackCanceled = true;
             entity.speak();
@@ -114,14 +114,16 @@ public class EventHandler {
 
         System.out.println("healing");
 
-        if (gp.keyH.enterPressed == true) {
+        if (gp.keyH.enterPressed) {
             gp.gameState = gameState;
             gp.player.attackCanceled = true;
             gp.playSE(2);
-            gp.ui.currentDialogue = "You drink the water. \nYour life and mana have been recovered.";
+            gp.ui.currentDialogue = "You drink the water. \nYour life and mana have been recovered.\n" +
+                    "(The progress has been saved)";
             gp.player.life = gp.player.maxLife;
             gp.player.mana = gp.player.maxMana;
             gp.aSetter.setMonster();
+            gp.saveLoad.save();
         }
 
     }
@@ -136,7 +138,7 @@ public class EventHandler {
             eventRect[map][col][row].x = col * gp.tileSize + eventRect[map][col][row].x;
             eventRect[map][col][row].y = row * gp.tileSize + eventRect[map][col][row].y;
 
-            if (gp.player.solidArea.intersects(eventRect[map][col][row]) && eventRect[map][col][row].eventDone == false) {
+            if (gp.player.solidArea.intersects(eventRect[map][col][row]) && !eventRect[map][col][row].eventDone) {
 
                 if (gp.player.direction.contentEquals(reqDirection) || reqDirection.contentEquals("any")) {
                     hit = true;
