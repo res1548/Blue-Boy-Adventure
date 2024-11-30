@@ -21,8 +21,7 @@ public class Entity {
     public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collision = false;
-    int dialoguesIndex = 0;
-    String dialogues[] = new String[20];
+    public String dialogues[][] = new String[20][20];
     public Entity attacker;
 
     // STATE
@@ -30,6 +29,8 @@ public class Entity {
     public int speed;
     public String direction = "down";
     public int spriteNum = 1;
+    public int dialoguesIndex = 0;
+    public int dialoguesSet = 0;
     public boolean collisionOn = false;
     public boolean invincible = false;
     public boolean attacking = false;
@@ -92,6 +93,7 @@ public class Entity {
     public boolean stackable = false;
     public int amount = 1;
     public int lightRadius;
+    public int durability = 100;
 
     // TYPE
     public int type;
@@ -139,11 +141,10 @@ public class Entity {
     public void damageReaction() {}
 
     public void speak() {
-        if (dialogues[dialoguesIndex] == null) {
-            dialoguesIndex = 0;
-        }
-        gp.ui.currentDialogue = dialogues[dialoguesIndex];
-        dialoguesIndex++;
+
+    }
+
+    public void facePlayer() {
         switch (gp.player.direction) {
 
             case "up":
@@ -160,6 +161,12 @@ public class Entity {
                 break;
 
         }
+    }
+
+    public void startDialogue(Entity entity, int setNum) {
+        gp.gameState = gp.dialogueState;
+        gp.ui.npc = entity;
+        dialoguesSet = setNum;
     }
 
     public void interact() {

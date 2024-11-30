@@ -1,5 +1,6 @@
 package entity;
 
+import main.EntityGenerator;
 import main.GamePanel;
 import main.KeyHandler;
 import object.*;
@@ -28,8 +29,8 @@ public class Player extends Entity {
 
         // SOLID AREA
         solidArea = new Rectangle();
-        solidArea.x = 1;
-        solidArea.y = 1;
+        solidArea.x = 8;
+        solidArea.y = 16;
         solidArea.width = 32;
         solidArea.height = 32;
         solidAreaDefaultX = solidArea.x;
@@ -44,13 +45,10 @@ public class Player extends Entity {
 
     public void setDefaultValues() {
 
-        worldX = gp.tileSize * 23;
-        worldY = gp.tileSize * 21;
-//        worldX = gp.tileSize * 12;
-//        worldY = gp.tileSize * 10;
+        worldX = gp.tileSize * 13;
+        worldY = gp.tileSize * 11;
         defaultSpeed = 4;
         speed = defaultSpeed;
-//        gp.currentMap = 1;
         direction = "down";
 
         // PLAYER STATUS
@@ -77,12 +75,18 @@ public class Player extends Entity {
         getAttackImage();
         getGuardImage();
         setItems();
+        setDialogue();
     }
 
     public void setDefaultPositions() {
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
         direction = "down";
+    }
+
+    public void setDialogue() {
+
+        dialogues[0][0] = "You are level " + level + " now!\n" + "You feel stronger!";
     }
 
     public void restoreStatus() {
@@ -282,6 +286,9 @@ public class Player extends Entity {
                 gp.playSE(7);
                 attacking = true;
                 spriteCounter = 0;
+
+                // DECREASE DURABILITY
+                currentWeapon.durability--;
             }
 
             attackCanceled = false;
@@ -442,7 +449,9 @@ public class Player extends Entity {
 
             gp.playSE(8);
             gp.gameState = gp.dialogueState;
-            gp.ui.currentDialogue = "You are level " + level + " now!\n" + "You feel stronger!";
+//            dialogues[0][0] = "You are level " + level + " now!\n" + "You feel stronger!";
+            setDialogue();
+            startDialogue(this, 0);
         }
     }
 
@@ -472,7 +481,6 @@ public class Player extends Entity {
 
             if (i != 999) {
                 attackCanceled = true;
-                gp.gameState = gp.dialogueState;
                 gp.npc[gp.currentMap][i].speak();
             }
 
@@ -581,10 +589,12 @@ public class Player extends Entity {
 
         boolean canObtain = false;
 
-        // CHECK IF STACKABLE
-        if (item.stackable) {
+        Entity newItem = gp.eGenerator.getObject(item.name);
 
-            int index = searchItemInInventory(item.name);
+        // CHECK IF STACKABLE
+        if (newItem.stackable) {
+
+            int index = searchItemInInventory(newItem.name);
 
             if (index != 999) {
                 inventory.get(index).amount++;
@@ -592,14 +602,14 @@ public class Player extends Entity {
             }
             else { // New item so need to check vacancy
                 if (inventory.size() != maxInventorySize) {
-                    inventory.add(item);
+                    inventory.add(newItem);
                     canObtain = true;
                 }
             }
         }
         else { // Not STACKABLE so check vacancy
             if (inventory.size() != maxInventorySize) {
-                inventory.add(item);
+                inventory.add(newItem);
                 canObtain = true;
             }
         }
